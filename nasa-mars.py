@@ -8,7 +8,7 @@ import re
 import bz2
 
 import gensim
-from gensim import corpora,models, similarities
+from gensim import corpora, models, similarities
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 # id2word = gensim.corpora.Dictionary.load_from_text('nasa-mars-teaching.txt')
@@ -78,7 +78,25 @@ lda_model.print_topics()
 hdp_model = models.hdpmodel.HdpModel(corpus, id2word=dictionary) # no num_topics kwarg, I get 20
 lda_model.print_topics()                                         # we could lower this to 5, for display
 
-import pdb; pdb.set_trace()
+
 
 
 ### http://radimrehurek.com/gensim/tut3.html
+
+# todo replace single vec with loop over tweets
+doc = "NASA turns to crowdsourcing to reduce costs as plans for Mars mission get underway. http://bit.ly/I4sbGn"
+vec_bow = dictionary.doc2bow(doc.lower().split())
+vec_lsi = lsi[vec_bow]
+logging.info("tweet vec_lsi=%s" % vec_lsi)
+
+index = similarities.MatrixSimilarity(lsi[corpus])
+sims = index[vec_lsi]
+logging.info("sims=%s" % list(enumerate(sims)))
+
+# Sort by similarity.
+# Shows which of the original Google search docs is closest to our first tweet;
+# Is this what we want? or are we looking for which tweets match the original Google docs?
+sims = [(sim, n) for (n, sim) in enumerate(sims)]
+sims.sort(reverse=True)
+logging.info("sorted sims=%s" % list(enumerate(sims)))
+logging.info("%s" % ["%f %d %s" % (sim, n, documents[n]) for (sim, n) in sims]) # not readabe
