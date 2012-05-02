@@ -1,0 +1,8 @@
+Remove punctuation from corpi -- training and real.
+Remove more stop words like 'is'
+
+  curl 'http://search.twitter.com/search.atom?q=nasa+mars&lang=en&rpp=100&result_type=recent' > nasa-mars-twitter.xml
+
+Then pull the text between <title>...</title>
+res = re.findall('<title>(.*?)</title>', tweets)
+
